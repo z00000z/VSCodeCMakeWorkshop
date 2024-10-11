@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "workshop Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            // "program": "${workspaceFolder}/build/Debug_install/bin/program_base",
+            "program": "${workspaceFolder}/build/Debug/hello_world",
+            "cwd": "${workspaceFolder}/build/Debug/",
+            "preLaunchTask": "program_build",
+            "externalConsole": false,
+            
+            "osx": {
+                "MIMode": "lldb"
+            },
+            
+            "linux": {
+                "MIMode":"gdb",
+                "setupCommands": [
+                    {
+                        "description":"Enable pretty-priting for gdb",
+                        "text":"-enable-pretty-printing",
+                        "ignoreFailures":true
+                    }
+                ]
+            },
+            "windows":{
+               "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "ignoreFailures": true,
+                        "text": "-enable-pretty-printing"
+                    }
+                ]
+            },
+            "environment": [
+                {"name": "Home", "value": "${workspaceFolder}/build/Debug_install"},
+            ]
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+#Head:[required]  <type>: <subject>
+#- type: feat, fix, docs, style, refactor, perf, test, build, ci, revert, tag
+#- subject: start with verb (such as 'change'), 100-character line
+#Description: [option]
+#IssueLink:[required] gitlab issues number
+
+type: subject
+
+[Description]: none
+[IssueLink]: #none

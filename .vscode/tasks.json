@@ -1,0 +1,121 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // create build dir
+            "label": "create_build_dir",
+            "command":"mkdir",
+            "type": "shell",
+            "args":[
+                "-p",
+                "build/${input:CMAKE_BUILD_TYPE}"
+            ],
+            "windows":{
+                "options": {
+                    "shell":{
+                        "executable": "powershell.exe"
+                    }
+                },
+                "args": [
+                    "-Force",
+                    "build/${input:CMAKE_BUILD_TYPE}"
+                ]
+            }
+        },
+        // project_manager
+        {
+            // run cmake
+            "label": "program_cmake",
+            "type":"shell",
+            "command":"cmake",
+            "args": [
+                // "-G", "MinGW Makefiles",// build by make
+                "-DCMAKE_BUILD_TYPE=${input:CMAKE_BUILD_TYPE}",
+                // "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}_install",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", // 生成compile_commands.json 供c/c++扩展提示使用
+                "../../"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
+            },
+            "dependsOn":[
+                "create_build_dir"
+            ]
+        },
+        {
+            "label": "program_build",
+            "group": "build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "./",
+                // "--config",
+                // "${input:CMAKE_BUILD_TYPE}",
+                "-j4"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
+            },
+            "problemMatcher": "$gcc",
+            "dependsOn": [
+                "program_cmake"
+            ]
+        },
+        {
+            "label": "program_install",
+            "group": "build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--install",
+                ".",
+                "--prefix ${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}_install"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
+            },
+            // "problemMatcher": "$gcc",
+            "dependsOn": [
+                "program_build"
+            ]
+        },
+    ],
+    "inputs":[
+        {
+            "id": "CMAKE_BUILD_TYPE",
+            "type": "pickString",
+            "description": "What CMAKE_BUILD_TYPE do you want to create?",
+            "options": [
+                "Debug",
+                "Release",
+                "RelWithDebInfo",
+                "MinSizeRel"
+            ],
+            "default": "Debug"
+        },
+        {
+            "id": "PLATFORM",
+            "type": "pickString",
+            "description": "What PLATFORM do you want to create?",
+            "options": [
+                "x86",
+                "x64"
+            ],
+            "default": "x64"
+        },
+        {
+            "id": "vcvars_ver",
+            "type": "pickString",
+            "description": "What vcvars_ver do you want to create?",
+            "options": [
+                "14.2",     // 2019
+                "14.1",     // 2017
+                "14.0",     // 2015
+            ],
+            "default": "14.2"
+        }
+    ]
+}

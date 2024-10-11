@@ -1,0 +1,10 @@
+/build/
+
+
+# Ignore everything in the .vscode folder
+.vscode/*
+
+# Except for specific files
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
