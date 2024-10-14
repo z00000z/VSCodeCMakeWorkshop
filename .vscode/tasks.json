@@ -1,20 +1,18 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
-            // create build dir
+            // create build dir task
             "label": "create_build_dir",
-            "command":"mkdir",
+            "command": "mkdir",
             "type": "shell",
-            "args":[
+            "args": [
                 "-p",
                 "build/${input:CMAKE_BUILD_TYPE}"
             ],
-            "windows":{
+            "windows": {
                 "options": {
-                    "shell":{
+                    "shell": {
                         "executable": "powershell.exe"
                     }
                 },
@@ -24,27 +22,27 @@
                 ]
             }
         },
-        // project_manager
         {
-            // run cmake
+            // CMake configuration task
             "label": "program_cmake",
-            "type":"shell",
-            "command":"cmake",
+            "type": "shell",
+            "command": "cmake",
             "args": [
                 // "-G", "MinGW Makefiles",// build by make
                 "-DCMAKE_BUILD_TYPE=${input:CMAKE_BUILD_TYPE}",
                 // "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}_install",
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", // 生成compile_commands.json 供c/c++扩展提示使用
-                "../../"
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",  // For code completion
+                "../.."  // Path to the source directory
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
             },
-            "dependsOn":[
+            "dependsOn": [
                 "create_build_dir"
             ]
         },
         {
+            // Build the project
             "label": "program_build",
             "group": "build",
             "type": "shell",
@@ -52,9 +50,7 @@
             "args": [
                 "--build",
                 "./",
-                // "--config",
-                // "${input:CMAKE_BUILD_TYPE}",
-                "-j4"
+                "-j4"  // Adjust for parallel builds
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
@@ -65,6 +61,7 @@
             ]
         },
         {
+            // Install task (optional)
             "label": "program_install",
             "group": "build",
             "type": "shell",
@@ -72,18 +69,18 @@
             "args": [
                 "--install",
                 ".",
-                "--prefix ${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}_install"
+                "--prefix",
+                "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}_install"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build/${input:CMAKE_BUILD_TYPE}"
             },
-            // "problemMatcher": "$gcc",
             "dependsOn": [
                 "program_build"
             ]
-        },
+        }
     ],
-    "inputs":[
+    "inputs": [
         {
             "id": "CMAKE_BUILD_TYPE",
             "type": "pickString",
@@ -109,11 +106,11 @@
         {
             "id": "vcvars_ver",
             "type": "pickString",
-            "description": "What vcvars_ver do you want to create?",
+            "description": "What vcvars_ver do you want to use?",
             "options": [
-                "14.2",     // 2019
-                "14.1",     // 2017
-                "14.0",     // 2015
+                "14.2",  // Visual Studio 2019
+                "14.1",  // Visual Studio 2017
+                "14.0"   // Visual Studio 2015
             ],
             "default": "14.2"
         }

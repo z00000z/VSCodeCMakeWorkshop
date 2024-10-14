@@ -104,5 +104,8 @@
     "editor.defaultFormatter": "xaver.clang-format",
     "[cpp]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[cmake]": {
+        "editor.defaultFormatter": "cheshirekow.cmake-format"
     }
 }
